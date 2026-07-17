@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RedLand — Minecraft Server</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div class="bg"></div>
+
+    <div class="container">
+        <!-- Заголовок -->
+        <h1 class="fade-in">⚔️ RedLand</h1>
+        <p class="sub fade-in">Военно политический майнкрафт сервер</p>
+
+        <!-- Статус онлайн -->
+        <div class="status-card fade-in">
+            <span class="dot"></span>
+            <span id="statusText">Загрузка...</span>
+            <span id="playerCount"></span>
+        </div>
+
+        <!-- IP -->
+        <div class="ip-box fade-in">
+            <span id="serverIp">redlandmc.duckdns.org</span>
+            <button onclick="copyIP()">📋 Скопировать</button>
+        </div>
+
+        <!-- Навигация -->
+        <div class="tabs fade-in">
+            <button class="tab-btn active" data-tab="main">Основное</button>
+            <button class="tab-btn" data-tab="rules">Правила</button>
+        </div>
+
+        <!-- Контент -->
+        <div id="main" class="tab-content active fade-in">
+            <h2>Добро пожаловать на RedLand</h2>
+            <p>Строй империи, торгуй, воюй, выживай.</p>
+        </div>
+
+        <div id="rules" class="tab-content fade-in">
+            <h2>Правила сервера</h2>
+
+<div class="rule">
+    <div class="rule-header" onclick="toggleRule(this)">📜 Вики</div>
+    <div class="rule-body">
+        <div class="rule">
+            <div class="rule-header" onclick="toggleRule(this)">📄 test1</div>
+            <div class="rule-body">Текст для test1</div>
+        </div>
+        <div class="rule">
+            <div class="rule-header" onclick="toggleRule(this)">📄 test2</div>
+            <div class="rule-body">Текст для test2</div>
+        </div>
+        <div class="rule">
+            <div class="rule-header" onclick="toggleRule(this)">📄 test3</div>
+            <div class="rule-body">Текст для test3</div>
+        </div>
+    </div>
+</div>
+
+<div class="rule">
+    <div class="rule-header" onclick="toggleRule(this)">📜 Раздел 2</div>
+    <div class="rule-body">Текст правила 2.</div>
+</div>
+
+<div class="rule">
+    <div class="rule-header" onclick="toggleRule(this)">📜 Раздел 3</div>
+    <div class="rule-body">Текст правила 3.</div>
+</div>
+
+    <script>
+        // Проверка статуса сервера
+        async function checkStatus() {
+            const statusEl = document.getElementById('statusText');
+            const countEl = document.getElementById('playerCount');
+            const dot = document.querySelector('.dot');
+
+            try {
+                const response = await fetch('https://api.mcsrvstat.us/3/redlandmc.duckdns.org');
+                const data = await response.json();
+
+                if (data.online) {
+                    dot.style.background = '#4caf50';
+                    statusEl.textContent = 'Онлайн';
+                    countEl.textContent = `👤 ${data.players.online} / ${data.players.max}`;
+                } else {
+                    dot.style.background = '#e74c3c';
+                    statusEl.textContent = 'Офлайн';
+                    countEl.textContent = '';
+                }
+            } catch {
+                dot.style.background = '#f1c40f';
+                statusEl.textContent = 'Ошибка проверки';
+            }
+        }
+
+        checkStatus();
+        setInterval(checkStatus, 30000);
+
+        // Копирование IP
+        function copyIP() {
+            const ip = document.getElementById('serverIp').textContent;
+            navigator.clipboard.writeText(ip).then(() => {
+                alert('✅ IP скопирован: ' + ip);
+            });
+        }
+
+        // Переключение вкладок
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Сворачивание правил
+        function toggleRule(header) {
+            const body = header.nextElementSibling;
+            body.style.display = body.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+
+</body>
+</html>
